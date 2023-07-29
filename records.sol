@@ -2,10 +2,10 @@
 
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts@4.9.2/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts@4.9.2/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts@4.9.2/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts@4.9.2/utils/Counters.sol";
 
 contract MakeNFT is ERC721, ERC721Enumerable, ERC721URIStorage
 {
@@ -13,7 +13,7 @@ contract MakeNFT is ERC721, ERC721Enumerable, ERC721URIStorage
 
     Counters.Counter private _tokenIdCounter;
 
-    constructor() ERC721("NFT-Name", "SYMBOL") {}
+    constructor() ERC721("SecureMedRecord", "SMR") {}
 
     function safeMint(address to, string memory uri) public
     {
@@ -32,7 +32,8 @@ contract MakeNFT is ERC721, ERC721Enumerable, ERC721URIStorage
         super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
-    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) 
+    {
         super._burn(tokenId);
     }
 
@@ -54,7 +55,8 @@ contract MakeNFT is ERC721, ERC721Enumerable, ERC721URIStorage
         return super.supportsInterface(interfaceId);
     }
 
-    function checkTransfer(address recipient, uint256 tokenId) public view returns (bool) {
+    function checkTransfer(address recipient, uint256 tokenId) public view returns (bool) 
+    {
         address owner = ownerOf(tokenId);
         return (owner == recipient);
     }
@@ -66,58 +68,51 @@ contract Documents
     server are mapped to the address of every patient*/
     mapping(address => bytes32[]) documents;
 
-    // **CHANGES HERE**
-
-    function addDocument(bytes32 documentHash) public 
+    function addDocument(bytes32 documentHash, address patient) public 
     returns (uint256)
     {
         //push returns the array length
-        documents[msg.sender].push(documentHash);
-        return documents[msg.sender].length - 1;
+        documents[patient].push(documentHash);
+        return documents[patient].length - 1;
     }
 
-    function getDocuments() public view
+    function getDocuments(address patient) public view
     returns (bytes32[] memory)
     {
-        return documents[msg.sender];
+        return documents[patient];
     }
 
 }
 
 contract DoctorAccesses
 {
-    //mapping: Doctor's Address => Pateints' Addresses
-    mapping(address => address[]) public doctorPermissions;
+    //mapping: Doctor's Address => Pateints' Addresses 
+    //doctorePermissions = {Doc1: [Patient1, Patient2, ..], Doc2: [Patient1, Patient2, ..], ..}
+    mapping(address => address[]) doctorPermissions;
 
-    // ** CHANGES HERE**
     mapping (address => bool) doctors;  // mapping to add doctors
 
     mapping (address => bool) patients;   // mapping to add and keep track of patients
 
-    function addDoc(address addr) public {  // function that lets you add a user as doc, when he/she comes for the 
-                                            // first time on the page
+    function addDoc(address addr) public    // function that lets you add a user as doc, when he/she comes for the 
+    {                                       // first time on the page
         doctors[addr] = true;
-
     }
 
-    function addPatient(address addr) public { // function that lets you add a user as patient, when he/she comes for the 
-                                            // first time on the page
-
+    function addPatient(address addr) public  // function that lets you add a user as patient, when he/she comes for the 
+    {                                         // first time on the page
         patients[addr] = true;
-
     }
 
-    // **CHANGES END HERE**
 
     /*Patient grants access to a doctor. 
     The patient's address is mapped to the doctor's*/
-    function grantAccess(address doctor) public 
+    function grantAccess(address doctor) public  
     {
         doctorPermissions[doctor].push(msg.sender);
     }
 
-
-    function revokeAccess(address doctor) public 
+    function revokeAccess(address doctor) public
     {
         for(uint i = 0; i < doctorPermissions[doctor].length; i++)
         {
@@ -143,16 +138,27 @@ PatientFunctions inherits from RecordsChain, DoctorAccesses
 */
 contract PatientFunctions is Documents, DoctorAccesses, MakeNFT
 {
-    // bytes32 public documentHash;
-    // address public doctor;
-    // address patient = msg.sender;
+    address patient = msg.sender;
 
-    // **CHANGES HERE**
+    function manageAccess(address doctor) external {
+        _grantAccess(doctor);
+        _revokeAccess(doctor);
+    }
+
+    // Internal wrapper functions to access the internal functions from DoctorAccesses
+
+    function _grantAccess(address doctor) internal {
+        grantAccess(doctor);
+    }
+
+    function _revokeAccess(address doctor) internal {
+        revokeAccess(doctor);
+    }
+
 
     // Checks whether the doc is already in the mapping or not 
-    
-    function checkDoc() public view returns(bool){
-
+    function checkDoc() public view returns(bool)
+    {
         if(doctors[msg.sender])
         return true;
 
@@ -160,22 +166,23 @@ contract PatientFunctions is Documents, DoctorAccesses, MakeNFT
     }
 
     // Checks whether the patiebt is already added ot not and returns a boolean value
-
-    function checkPatient() public view returns(bool){
-
+    function checkPatient() public view returns(bool)
+    {
         if(patients[msg.sender])
         return true;
 
         return false;
     }
-
-    // **CHANGES HERE**
 }
 
-//DoctorFunctions inherits from DoctorAccesses so a Dr. can grant/rewoke access to some colleague
+//DoctorFunctions inherits from DoctorAccesses to access the patientsUnderDoctor function 
 contract DoctorFunctions is Documents, DoctorAccesses
 {
-    bytes32 public documentHash;
-    address public patient;
     address doctor = msg.sender;
+
+    function viewPatients(address doc) external view
+    {
+        patientsUnderDoctor(doc);
+    }
+
 }
