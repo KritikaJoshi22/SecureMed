@@ -10,10 +10,8 @@ const Register = (props) => {
     const [mobno, setMobno] = useState('');
     const [username, setUsername] = useState('');
 
-   console.log('working fine');
+   
     const contract = useInst();
-
-    console.log('instance called');
     const handleSubmit = async (e) => {
         e.preventDefault();
         

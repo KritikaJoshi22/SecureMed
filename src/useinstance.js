@@ -13,9 +13,6 @@ import { ethers } from "ethers";
     useEffect(() => {
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-
-      console.log(provider);
-
       const signer = provider.getSigner();
       const evenTesContract = new ethers.Contract(
         contractAddress,
@@ -32,7 +29,7 @@ import { ethers } from "ethers";
       setContract(evenTesContract);
 
 
-      console.log("Contract instance:",evenTesContract);
+      
     } catch (error) {
       console.error("Error creating contract instance:", error);
     }

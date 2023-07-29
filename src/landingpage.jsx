@@ -6,7 +6,7 @@ import test_abi from "./recordsabi.json";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
-  
+
   const navigation = useNavigate()
 
   const [ethWallet, setEthWallet] = useState(undefined);
@@ -48,6 +48,8 @@ export default function Home() {
     handleAccount(accounts);
 
     getevenTesContract();
+
+    
   };
 
   const getevenTesContract = () => {
@@ -86,9 +88,11 @@ export default function Home() {
     if (evenTes) {
       console.log("found patient");
       const check = await evenTes.checkPatient();
-      console.log(check);
-      console.log("check2");
+      console.log(check, 'patient');
+      console.log("checkpat");
       setIsPatient(check);
+
+      console.log(isPatient);
     }
   };
 
@@ -101,21 +105,33 @@ export default function Home() {
 
     if (evenTes) {
       const check = await evenTes.checkDoc();
+      console.log(check);
       setIsDoctor(check);
       console.log("found doc");
     }
   };
 
+  useEffect(() => {
+    // Check if evenTes is defined and isPatient/isDoctor have been updated
+    if (evenTes && (isPatient || isDoctor)) {
+      handleNavigate();
+    }
+    // else if(evenTes && (!isPatient  || !isDoctor)){
+    //     navigation("/register");
+    // }
+  }, [evenTes, isPatient, isDoctor]);
+
   const handleNavigate = () => {
     if (evenTes){
+
+      console.log('patient', isPatient);
+      console.log('doc', isDoctor);
     if (isPatient) {
       navigation("/patient");
     }
-    if (isDoctor) {
+    else if (isDoctor) {
       navigation("/doctor");
-    } else {
-      navigation("/register");
-    }
+    } 
   }
   else{
     return <div>Contract not instance</div>
@@ -139,7 +155,9 @@ export default function Home() {
 
     getPatient();
     getDoc();
-    handleNavigate();
+
+    
+    
   };
   useEffect(() => {
     getWallet();
