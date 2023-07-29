@@ -1,0 +1,17 @@
+.Navbar{
+    justify-content: space-between;
+    display: flex;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+  }
+  .Navbar-logo{
+    color:white;
+    font-size:20px;
+  }
+  .Navbar-menu{
+    display: flex;
+    list-style-type: none;
+    gap: 30px;
+    align-items: center;
+    margin: 0;
+  }
