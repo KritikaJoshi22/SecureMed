@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import "./Navbar.css";
-import { Pinata } from "@pinata/sdk";
+// import { Pinata } from "@pinata/sdk";
 import Navbar from "./Navbar";
 
 class Patient extends PureComponent {

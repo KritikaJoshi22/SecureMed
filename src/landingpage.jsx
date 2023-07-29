@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import test_abi from "./recordsabi.json";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
-  const router = useRouter();
+  
+  const navigation = useNavigate()
 
   const [ethWallet, setEthWallet] = useState(undefined);
   const [account, setAccount] = useState(undefined);
@@ -106,14 +107,19 @@ export default function Home() {
   };
 
   const handleNavigate = () => {
+    if (evenTes){
     if (isPatient) {
-      router.push("/patient");
+      navigation("/patient");
     }
     if (isDoctor) {
-      router.push("/doctor");
+      navigation("/doctor");
     } else {
-      router.push("/patient");
+      navigation("/register");
     }
+  }
+  else{
+    return <div>Contract not instance</div>
+  }
   };
 
   const initUser = () => {

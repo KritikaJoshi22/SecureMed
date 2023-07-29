@@ -1,31 +1,24 @@
-import React, { useState } from "react";
-import './App.css';
-import { Login } from "./login";
-import { Register } from "./registration";
-import Securemed from "./landingpage";
-import Patient from "./patient";
-import Doctor from "./Doctor";
-import Upload from "./Upload";
-function App() {
-  const [currentForm, setCurrentForm] = useState('login');
-
-  const toggleForm = (formName) => {
-    setCurrentForm(formName);
-  }
-
-  return (
-    <div> <Securemed/>
-    <div className="App">
-      {
-        currentForm === "login" ? <Login onFormSwitch={toggleForm} /> : <Register onFormSwitch={toggleForm} />
-      }
-     </div> 
-     <div><Patient/></div> 
-     <div><Doctor/></div>
-     <div><Upload/></div>
-    </div>
-    
-  );
-}
-
+import React from "react"; 
+import './App.css'; 
+import { BrowserRouter, Route, Routes} from "react-router-dom"; 
+import Securemed from "./landingpage"; 
+import Patient from "./patient"; 
+import Doctor from "./Doctor"; 
+// import Upload from "./Upload";
+import Register from "./Register" ; 
+function App() { 
+ 
+  return ( 
+    <BrowserRouter> 
+    <Routes> 
+      <Route path = "/" element = {<Securemed/>} /> 
+      <Route path = "Patient" element = {<Patient/>} /> 
+      <Route path = "Doctor" element = {<Doctor/>} /> 
+      <Route path = "Register" element = {<Register/>} /> 
+    </Routes> 
+    </BrowserRouter> 
+     
+  ); 
+} 
+ 
 export default App;
