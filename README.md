@@ -1,3 +1,4 @@
+SecureMed
 SecureMed is a blockchain enabled system that will keep the medical history of patients ina chain that is secure and cannot be accessed without their consent.
 
 ML models will work on medical records and help patients achieve healthier lifestyles by suggesting lifestyle changes they can adopt.  
